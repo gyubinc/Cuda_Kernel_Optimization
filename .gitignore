@@ -1,0 +1,29 @@
+# Models
+models/
+*.pt
+*.pth
+*.ckpt
+*.onnx
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env
+
+# Data
+data/
+*.csv
+*.parquet
+*.h5
+
+# OS
+.DS_Store
+
+# Logs
+logs/
+*.log
+
+# Temp
+tmp/
