@@ -35,7 +35,3 @@ Run the solver using `srun` to allocate GPU resources.
 ```bash
 srun -t 00:10:00 --gres=gpu:1 ./tpm_solver -n 1048576 -b 256
 ```
-
-## Verification
-The solver effectively calculates the residual $||Ax - d||^2$ at the end of execution to verify correctness.
-- **Expected Output**: `Solution snippets` showing $x \approx 1.0$ and a very small `Total Residual SSD` (near machine epsilon).
