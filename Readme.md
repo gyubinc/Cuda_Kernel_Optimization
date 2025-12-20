@@ -1,10 +1,3 @@
-# CUDA Kernel Optimization: TPM Solver
-
-This project implements a **Parallel Cyclic Reduction (PCR)** solver for tridiagonal systems ($Ax = d$) on NVIDIA GPUs using CUDA.
-
-## Description
-The solver uses the PCR algorithm to solve the system in $O(\log N)$ steps. It is designed to handle large systems (tested up to $N \approx 1.6 \times 10^7$) efficiently on GPU clusters.
-
 ## Prerequisites
 - NVIDIA GPU (Compute Capability 7.0 or higher recommended)
 - CUDA Toolkit (Tested with CUDA 11.8)
