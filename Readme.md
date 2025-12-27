@@ -1,15 +1,13 @@
 # CUDA Kernel Optimization & Performance Prediction
 
-This project analyzes the performance of various CUDA kernels (TPM, MatMul, Reduction) and predicts optimal configurations using Machine Learning and Deep Learning models.
+이 프로젝트는 다양한 CUDA 커널(TPM, MatMul, Reduction)의 성능을 분석하고, 머신러닝 및 딥러닝 모델을 활용하여 최적의 구성을 예측합니다.
 
-## Quick Start
-
-Follow these steps to set up the environment and run a sample experiment (Task: TPM, Model: SVM).
-
+# Quick Start
 
 ## Baseline 실험 (T_overhead)
 
-The project includes an analytical baseline model (**T_overhead**) that predicts optimal stream configurations using theoretical overhead models. This serves as the fundamental comparison target for the ML/DL models.
+base인 T_overhead 모델을 사용하여 최적의 스트림 구성을 예측하는 분석적 베이스라인 모델(**T_overhead**)을 포함합니다. 
+이는 ML/DL 모델의 성능을 평가하기 위한 핵심적인 baseline 역할을 합니다.
 
 ```bash
 # Run Baseline Analysis (T_overhead)
