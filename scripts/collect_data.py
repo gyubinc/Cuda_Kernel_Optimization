@@ -112,8 +112,8 @@ def collect_tpm(mode: str, n_min: int, n_max: int, append: bool):
 
 def collect_matmul(mode: str, n_min: int, n_max: int, append: bool):
   binary = BIN_DIR / "matmul_solver"
-  stream_list = list(range(1, 16 + 1))
-  tiles = [8, 16, 32]
+  stream_list = [1, 4, 8, 16]
+  tiles = [16, 32]
   rows = [("task", "n", "streams", "tile", "time_ms")]
   for n in matmul_sizes(n_min, n_max):
     for s in stream_list:
@@ -129,8 +129,8 @@ def collect_matmul(mode: str, n_min: int, n_max: int, append: bool):
 
 def collect_reduction(mode: str, n_min: int, n_max: int, append: bool):
   binary = BIN_DIR / "reduction_solver"
-  stream_list = list(range(1, 32 + 1))
-  blocks = [64, 128, 256, 512, 1024]  # 파워오브투만 사용해 reduce 정확성 확보
+  stream_list = [1, 2, 4, 8, 16, 32]
+  blocks = [128, 256, 512]  # 파워오브투만 사용해 reduce 정확성 확보
   rows = [("task", "n", "streams", "block", "time_ms")]
   for n in reduction_sizes(n_min, n_max):
     for s in stream_list:

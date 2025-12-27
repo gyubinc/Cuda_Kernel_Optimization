@@ -240,15 +240,94 @@ def train_task(task: str) -> Dict[str, float]:
 
 
 def main():
+  import argparse
+  parser = argparse.ArgumentParser()
+  parser.add_argument("--task", choices=["tpm", "matmul", "reduction", "all"], default="all")
+  parser.add_argument("--model", type=str, default="all", help="Model name to filter (comma separated or partial match)")
+  args = parser.parse_args()
+
   set_seed(42)
   all_results = {}
-  for task in ["tpm", "matmul", "reduction"]:
-    all_results[task] = train_task(task)
+  tasks = [args.task] if args.task != "all" else ["tpm", "matmul", "reduction"]
+
+  for task in tasks:
+    # Logic from train_task but filtered
+    train_df = pd.read_csv(DATA_DIR / f"{task}_train.csv")
+    test_df = pd.read_csv(DATA_DIR / f"{task}_test.csv")
+    # 연속된 클래스 id로 remap
+    uniques = sorted(train_df["config_id"].unique())
+    mapping = {c: i for i, c in enumerate(uniques)}
+    train_df = train_df.copy()
+    test_df = test_df.copy()
+    train_df["label"] = train_df["config_id"].map(mapping)
+    test_df["label"] = test_df["config_id"].map(mapping).fillna(-1).astype(int)
+    
+    # Filter out test samples with unknown labels
+    test_df = test_df[test_df["label"] != -1].copy()
+    
+    if len(test_df) == 0:
+      print(f"[{task}] Warning: No valid test samples (labels not in training set). Skipping DL evaluation.")
+      all_results[task] = {}
+      continue
+
+    num_classes = len(mapping)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    train_loader, test_loader = get_loaders(train_df, test_df, label_col="label")
+
+    all_models_map = {
+        "mlp": MLP3(2, num_classes),
+        "deep_dnn": DeepDNN(2, num_classes),
+        "resnet_mlp": ResNetMLP(2, num_classes),
+        "tabnet": SimpleTabNet(2, num_classes),
+        "ft_transformer": FTTransformer(2, num_classes),
+    }
+    
+    # Filter models
+    if args.model != "all":
+      target_models = [m.strip().lower() for m in args.model.split(",")]
+      models = {k: v for k, v in all_models_map.items() if any(t in k.lower() for t in target_models)}
+      if not models:
+        print(f"[{task}] Warning: No DL models matched '{args.model}'. Available: {list(all_models_map.keys())}")
+    else:
+      models = all_models_map
+
+    results: Dict[str, float] = {}
+    for name, model in models.items():
+      acc, trained_model, train_time, infer_time = train_one_model(model, train_loader, test_loader, device)
+      results[name] = {
+          "acc": acc,
+          "train_time_s": train_time,
+          "infer_time_s": infer_time,
+      }
+      save_path = MODEL_DIR / f"{task}_{name}.pt"
+      torch.save(trained_model.state_dict(), save_path)
+      
+      print("\n" + "="*40)
+      print(f" [Selected Configuration]")
+      print(f"   Task  : {task}")
+      print(f"   Model : {name}")
+      print("-" * 40)
+      print(f" [Test Results]")
+      print(f"   Accuracy       : {acc:.4f}")
+      print(f"   Train Time     : {train_time:.4f} s")
+      print(f"   Inference Time : {infer_time:.4f} s")
+      print(f"   Saved Model    : {save_path.name}")
+      print("="*40 + "\n")
+    all_results[task] = results
 
   out_path = DATA_DIR / "dl_results.json"
+  if out_path.exists():
+      with open(out_path, "r") as f:
+          try:
+              existing = json.load(f)
+              existing.update(all_results)
+              all_results = existing
+          except json.JSONDecodeError:
+              pass
+
   with open(out_path, "w") as f:
     json.dump(all_results, f, indent=2)
-  print(json.dumps(all_results, indent=2))
+  # print(json.dumps(all_results, indent=2))
 
 
 if __name__ == "__main__":

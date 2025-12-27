@@ -13,7 +13,7 @@ venv/
 .env
 
 # Data
-data/
+# data/
 *.csv
 *.parquet
 *.h5

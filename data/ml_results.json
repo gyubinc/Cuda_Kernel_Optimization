@@ -1,0 +1,11 @@
+{
+  "tpm": {},
+  "reduction": {
+    "xgboost": {
+      "acc": 0.25,
+      "train_time_s": 0.04330089129507542,
+      "infer_time_s": 0.0011581405997276306
+    }
+  },
+  "matmul": {}
+}

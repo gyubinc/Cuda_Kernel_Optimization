@@ -1,30 +1,67 @@
-## Prerequisites
-- NVIDIA GPU (Compute Capability 7.0 or higher recommended)
-- CUDA Toolkit (Tested with CUDA 11.8)
-- SLURM Workload Manager (for cluster execution via `srun`)
+# CUDA Kernel Optimization & Performance Prediction
 
-## Compilation
-To compile the solver, use `nvcc`. Ensure you are using a CUDA version compatible with your driver.
+This project analyzes the performance of various CUDA kernels (TPM, MatMul, Reduction) and predicts optimal configurations using Machine Learning and Deep Learning models.
 
-```bash
-# Example using CUDA 11.8
-/usr/local/cuda-11.8/bin/nvcc -o tpm_solver src/tpm_solver.cu -O3 -arch=sm_70
-```
+## Quick Start
 
-## Execution
-Run the solver using `srun` to allocate GPU resources.
-
-### Usage
-```bash
-./tpm_solver -n <PROBLEM_SIZE> -b <BLOCK_SIZE>
-```
-
-- `-n`: Size of the tridiagonal system (e.g., 1024, 1048576).
-- `-b`: CUDA block size (threads per block, default: 256).
-
-### Example Command
- To run a test with $N=1,024,000$ and block size 256:
+Follow these steps to set up the environment and run a sample experiment (Task: TPM, Model: SVM).
 
 ```bash
-srun -t 00:10:00 --gres=gpu:1 ./tpm_solver -n 1048576 -b 256
+# 1. Install Dependencies
+pip install -r requirements.txt
+
+# 2. Run Experiment (Model Training)
+# The dataset is pre-included in the 'data/' folder, so you can train models immediately.
+
+# Option A: TPM (Tridiagonal Matrix)
+srun -t 01:00 --gres=gpu:1 python3 scripts/run_pipeline.py --task tpm --model svm
+
+# Option B: MatMul (Matrix Multiplication)
+srun -t 01:00 --gres=gpu:1 python3 scripts/run_pipeline.py --task matmul --model random_forest
+
+# Option C: Reduction (Parallel Sum)
+srun -t 01:00 --gres=gpu:1 python3 scripts/run_pipeline.py --task reduction --model xgboost
+
+# Note: If you want to collect new data, use the '--n-max' argument (e.g., --n-max 50000). 
+
 ```
+
+## Available Options
+
+You can customize the experiment by specifying the `--task` and `--model` arguments.
+
+### Supported Tasks (`--task`)
+| Task | Description |
+| :--- | :--- |
+| `tpm` | Tridiagonal Matrix Algorithm (Thomas Algorithm) Solver |
+| `matmul` | Matrix Multiplication |
+| `reduction` | Parallel Reduction (Sum) |
+
+### Supported Models (`--model`)
+You can specify a full name or a partial keyword (e.g., `mlp` runs all MLP-based models).
+
+**Machine Learning Models:**
+- `random_forest` : Random Forest Classifier
+- `svm_rbf` : Support Vector Machine (RBF Kernel)
+- `xgboost` : XGBoost
+- `lightgbm` : LightGBM
+- `catboost` : CatBoost
+
+**Deep Learning Models:**
+- `mlp` : Simple Multi-Layer Perceptron
+- `deep_dnn` : Deep Dense Neural Network (BatchNorm + Dropout)
+- `resnet_mlp` : ResNet-style MLP
+- `tabnet` : TabNet (Attention-based network for tabular data)
+- `ft_transformer` : FT-Transformer (Feature Tokenizer + Transformer)
+
+## Project Structure
+
+- **`src/`**: CUDA source codes (`tpm_solver.cu`, `matmul_solver.cu`, `reduction_solver.cu`).
+- **`scripts/`**: Python scripts for data collection, preprocessing, and training.
+  - `run_pipeline.py`: Main driver script.
+  - `collect_data.py`: Runs CUDA binaries to collect execution time.
+  - `preprocess.py`: Cleans data and splits into train/test sets.
+  - `train_ml.py`: Trains ML models.
+  - `train_dl.py`: Trains DL models.
+- **`data/`**: Stores collected CSV data and training results (created automatically).
+- **`bin/`**: Stores compiled CUDA executables (created automatically).

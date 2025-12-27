@@ -1,3 +1,4 @@
+import argparse
 import json
 import time
 from pathlib import Path
@@ -130,15 +131,89 @@ def train_and_eval(task: str) -> Dict[str, Dict[str, float]]:
 
 
 def main():
+  parser = argparse.ArgumentParser()
+  parser.add_argument("--task", choices=["tpm", "matmul", "reduction", "all"], default="all")
+  parser.add_argument("--model", type=str, default="all", help="Model name to filter (comma separated or partial match)")
+  args = parser.parse_args()
+
+  tasks = [args.task] if args.task != "all" else ["tpm", "matmul", "reduction"]
+  
   results: Dict[str, Dict[str, float]] = {}
-  for task in ["tpm", "matmul", "reduction"]:
-    results[task] = train_and_eval(task)
+  for task in tasks:
+    train_df, test_df = load_dataset(task)
+    # Re-using logic from train_and_eval but filtering models
+    feature_cols = ["n", "log_n"]
+    X_train = train_df[feature_cols].values
+    y_train = train_df["config_id"].values
+    X_test = test_df[feature_cols].values
+    y_test = test_df["config_id"].values
+
+    y_train, y_test, num_classes = remap_labels(y_train, y_test)
+    test_mask = y_test != -1
+    X_test = X_test[test_mask]
+    y_test = y_test[test_mask]
+
+    if len(X_test) == 0:
+      print(f"[{task}] Warning: No valid test samples (labels not in training set). Skipping evaluation.")
+      results[task] = {}
+      continue
+
+    all_models = build_models(num_classes)
+    # Filter models
+    if args.model != "all":
+      target_models = [m.strip().lower() for m in args.model.split(",")]
+      models = {k: v for k, v in all_models.items() if any(t in k.lower() for t in target_models)}
+      if not models:
+        print(f"[{task}] Warning: No models matched '{args.model}'. Available: {list(all_models.keys())}")
+    else:
+      models = all_models
+
+    task_scores: Dict[str, Dict[str, float]] = {}
+    for name, model in models.items():
+      t0 = time.perf_counter()
+      model.fit(X_train, y_train)
+      train_time = time.perf_counter() - t0
+
+      t1 = time.perf_counter()
+      preds = model.predict(X_test)
+      if preds.ndim > 1:
+        preds = np.argmax(preds, axis=1)
+      infer_time = time.perf_counter() - t1
+
+      acc = accuracy_score(y_test, preds)
+      task_scores[name] = {
+          "acc": acc,
+          "train_time_s": train_time,
+          "infer_time_s": infer_time,
+      }
+      print("\n" + "="*40)
+      print(f" [Selected Configuration]")
+      print(f"   Task  : {task}")
+      print(f"   Model : {name}")
+      print("-" * 40)
+      print(f" [Test Results]")
+      print(f"   Accuracy       : {acc:.4f}")
+      print(f"   Train Time     : {train_time:.4f} s")
+      print(f"   Inference Time : {infer_time:.4f} s")
+      print(f"   Test Samples   : {len(y_test)}")
+      print(f"   Num Classes    : {num_classes}")
+      print("="*40 + "\n")
+    results[task] = task_scores
 
   out_path = DATA_DIR / "ml_results.json"
+  # Save/Update logic could be improved (currently overwrites)
+  if out_path.exists():
+      with open(out_path, "r") as f:
+          try:
+              existing = json.load(f)
+              existing.update(results)
+              results = existing
+          except json.JSONDecodeError:
+              pass
+              
   with open(out_path, "w") as f:
     json.dump(results, f, indent=2)
-  print(json.dumps(results, indent=2))
-
+  # print(json.dumps(results, indent=2)) 
 
 if __name__ == "__main__":
   main()
