@@ -24,6 +24,15 @@ srun -t 01:00 --gres=gpu:1 python3 scripts/run_pipeline.py --task reduction --mo
 
 ```
 
+## Baseline Model (T_overhead)
+
+The project includes an analytical baseline model (**T_overhead**) that predicts optimal stream configurations using theoretical overhead models. This serves as the fundamental comparison target for the ML/DL models.
+
+```bash
+# Run Baseline Analysis (T_overhead)
+python3 scripts/baseline.py
+```
+
 ## Available Options
 
 You can customize the experiment by specifying the `--task` and `--model` arguments.
@@ -59,5 +68,6 @@ You can specify a full name or a partial keyword (e.g., `mlp` runs all MLP-based
   - `preprocess.py`: Cleans data and splits into train/test sets.
   - `train_ml.py`: Trains ML models.
   - `train_dl.py`: Trains DL models.
+  - `baseline.py`: Implements the analytical T_overhead model and baseline comparison.
 - **`data/`**: Stores collected CSV data and training results (created automatically).
 - **`bin/`**: Stores compiled CUDA executables (created automatically).
