@@ -2,6 +2,8 @@
 
 이 프로젝트는 다양한 CUDA 커널(TPM, MatMul, Reduction)의 성능을 분석하고, 머신러닝 및 딥러닝 모델을 활용하여 최적의 구성을 예측합니다.
 
+**srun으로 작성된 bash 파일들은 수업 때 사용한 서버에서만 실행이 가능합니다.**
+
 # Quick Start
 
 ## Baseline 실험 (T_overhead)
