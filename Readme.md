@@ -6,12 +6,38 @@ This project analyzes the performance of various CUDA kernels (TPM, MatMul, Redu
 
 Follow these steps to set up the environment and run a sample experiment (Task: TPM, Model: SVM).
 
+
+## Baseline 실험 (T_overhead)
+
+The project includes an analytical baseline model (**T_overhead**) that predicts optimal stream configurations using theoretical overhead models. This serves as the fundamental comparison target for the ML/DL models.
+
 ```bash
-# 1. Install Dependencies
+# Run Baseline Analysis (T_overhead)
+git clone https://github.com/gyubinc/Cuda_Kernel_Optimization.git
+pip install -r requirements.txt
+python3 scripts/baseline.py
+```
+
+## 모든 모델, task 실험
+
+```bash
+git clone https://github.com/gyubinc/Cuda_Kernel_Optimization.git
 pip install -r requirements.txt
 
-# 2. Run Experiment (Model Training)
-# The dataset is pre-included in the 'data/' folder, so you can train models immediately.
+# 모든 조합 모두 실행
+bash test_all.sh
+
+# 모든 task를 1개 모델씩 실행
+bash test_simple.sh
+
+```
+
+## 직접 task, model 지정
+
+```bash
+git clone https://github.com/gyubinc/Cuda_Kernel_Optimization.git
+
+pip install -r requirements.txt
 
 # Option A: TPM (Tridiagonal Matrix)
 srun -t 01:00 --gres=gpu:1 python3 scripts/run_pipeline.py --task tpm --model svm_rbf
@@ -24,14 +50,6 @@ srun -t 01:00 --gres=gpu:1 python3 scripts/run_pipeline.py --task reduction --mo
 
 ```
 
-## Baseline Model (T_overhead)
-
-The project includes an analytical baseline model (**T_overhead**) that predicts optimal stream configurations using theoretical overhead models. This serves as the fundamental comparison target for the ML/DL models.
-
-```bash
-# Run Baseline Analysis (T_overhead)
-python3 scripts/baseline.py
-```
 
 ## Available Options
 
