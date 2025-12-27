@@ -14,15 +14,13 @@ pip install -r requirements.txt
 # The dataset is pre-included in the 'data/' folder, so you can train models immediately.
 
 # Option A: TPM (Tridiagonal Matrix)
-srun -t 01:00 --gres=gpu:1 python3 scripts/run_pipeline.py --task tpm --model svm
+srun -t 01:00 --gres=gpu:1 python3 scripts/run_pipeline.py --task tpm --model svm_rbf
 
 # Option B: MatMul (Matrix Multiplication)
 srun -t 01:00 --gres=gpu:1 python3 scripts/run_pipeline.py --task matmul --model random_forest
 
 # Option C: Reduction (Parallel Sum)
-srun -t 01:00 --gres=gpu:1 python3 scripts/run_pipeline.py --task reduction --model xgboost
-
-# Note: If you want to collect new data, use the '--n-max' argument (e.g., --n-max 50000). 
+srun -t 01:00 --gres=gpu:1 python3 scripts/run_pipeline.py --task reduction --model xgboost 
 
 ```
 
@@ -44,8 +42,6 @@ You can specify a full name or a partial keyword (e.g., `mlp` runs all MLP-based
 - `random_forest` : Random Forest Classifier
 - `svm_rbf` : Support Vector Machine (RBF Kernel)
 - `xgboost` : XGBoost
-- `lightgbm` : LightGBM
-- `catboost` : CatBoost
 
 **Deep Learning Models:**
 - `mlp` : Simple Multi-Layer Perceptron
