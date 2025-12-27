@@ -1,0 +1,23 @@
+{
+  "tpm": {
+    "ft_transformer": {
+      "acc": 1.0,
+      "train_time_s": 0.2432060930877924,
+      "infer_time_s": 0.0011938028037548065
+    }
+  },
+  "matmul": {
+    "ft_transformer": {
+      "acc": 0.5,
+      "train_time_s": 0.23512793704867363,
+      "infer_time_s": 0.0012923907488584518
+    }
+  },
+  "reduction": {
+    "ft_transformer": {
+      "acc": 0.5,
+      "train_time_s": 0.23954464308917522,
+      "infer_time_s": 0.0013924799859523773
+    }
+  }
+}

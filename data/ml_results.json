@@ -1,23 +1,23 @@
 {
   "tpm": {
-    "svm_rbf": {
+    "xgboost": {
       "acc": 1.0,
-      "train_time_s": 0.0024426747113466263,
-      "infer_time_s": 0.00042202696204185486
+      "train_time_s": 0.042809776961803436,
+      "infer_time_s": 0.0009695384651422501
     }
   },
   "reduction": {
     "xgboost": {
       "acc": 0.25,
-      "train_time_s": 0.04731653071939945,
-      "infer_time_s": 0.0017140302807092667
+      "train_time_s": 0.042221520096063614,
+      "infer_time_s": 0.0010019950568675995
     }
   },
   "matmul": {
-    "random_forest": {
+    "xgboost": {
       "acc": 0.5,
-      "train_time_s": 0.27443331480026245,
-      "infer_time_s": 0.03636799566447735
+      "train_time_s": 0.034758372232317924,
+      "infer_time_s": 0.0009967684745788574
     }
   }
 }
