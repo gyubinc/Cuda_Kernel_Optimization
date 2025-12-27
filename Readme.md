@@ -14,6 +14,7 @@ base인 T_overhead 모델을 사용하여 최적의 스트림 구성을 예측�
 ```bash
 # Run Baseline Analysis (T_overhead)
 git clone https://github.com/gyubinc/Cuda_Kernel_Optimization.git
+cd Cuda_Kernel_Optimization
 pip install -r requirements.txt
 python3 scripts/baseline.py
 ```
@@ -22,6 +23,7 @@ python3 scripts/baseline.py
 
 ```bash
 git clone https://github.com/gyubinc/Cuda_Kernel_Optimization.git
+cd Cuda_Kernel_Optimization
 pip install -r requirements.txt
 
 # 모든 조합 모두 실행
@@ -36,7 +38,7 @@ bash test_simple.sh
 
 ```bash
 git clone https://github.com/gyubinc/Cuda_Kernel_Optimization.git
-
+cd Cuda_Kernel_Optimization
 pip install -r requirements.txt
 
 # Option A: TPM (Tridiagonal Matrix)

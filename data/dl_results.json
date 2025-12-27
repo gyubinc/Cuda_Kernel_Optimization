@@ -2,22 +2,22 @@
   "tpm": {
     "ft_transformer": {
       "acc": 1.0,
-      "train_time_s": 0.23469207994639874,
-      "infer_time_s": 0.0012139007449150085
+      "train_time_s": 0.2372790053486824,
+      "infer_time_s": 0.0012152232229709625
     }
   },
   "matmul": {
     "ft_transformer": {
       "acc": 0.5,
-      "train_time_s": 0.23470156826078892,
-      "infer_time_s": 0.0013124644756317139
+      "train_time_s": 0.23557854071259499,
+      "infer_time_s": 0.0013010893017053604
     }
   },
   "reduction": {
     "ft_transformer": {
       "acc": 0.5,
-      "train_time_s": 0.23825210891664028,
-      "infer_time_s": 0.0013809017837047577
+      "train_time_s": 0.23983385227620602,
+      "infer_time_s": 0.0013945363461971283
     }
   }
 }
